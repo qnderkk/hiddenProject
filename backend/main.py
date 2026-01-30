@@ -64,3 +64,15 @@ def login(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
         raise HTTPException(status_code=401, detail="Неверные данные")
 
     return {"message": "Успешный вход", "user_name": db_user.name}
+
+
+@app.get("/users/{user_id}")
+def get_user_profile(user_id: int, db: Session = Depends(database.get_db)):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    return {
+        "name": user.name,
+        "email": user.email,
+        "id": user.id
+    }

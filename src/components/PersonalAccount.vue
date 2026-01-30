@@ -1,95 +1,98 @@
 <template>
   <div class="account-container">
-    <div class="tabs">
-      <button class="tab" :class="{ active: activeTab === 'login' }" @click="activeTab = 'login'">Вход</button>
-      <button class="tab" :class="{ active: activeTab === 'register' }" @click="activeTab = 'register'">Регистрация</button>
+    <div v-if="auth.isLoggedIn" class="profile-view">
+      <h2>Личный кабинет</h2>
+      <div class="profile-card">
+        <p><strong>Имя:</strong> {{ auth.userName }}</p>
+        <p><strong>Email:</strong> {{ auth.user?.email }}</p>
+      </div>
+      <button @click="auth.logout()" class="btn btn-logout">Выйти</button>
     </div>
 
-    <div v-if="activeTab === 'login'" class="form-container active">
-      <form @submit.prevent="handleLogin">
-        <div class="form-group">
-          <label>Email:</label>
-          <input type="email" v-model="loginForm.email" required>
-        </div>
-        <div class="form-group">
-          <label>Пароль:</label>
-          <input type="password" v-model="loginForm.password" required>
-        </div>
-        <button type="submit" class="btn">Войти</button>
-      </form>
-    </div>
+    <div v-else>
+      <div class="tabs">
+        <button class="tab" :class="{ active: activeTab === 'login' }" @click="activeTab = 'login'">Вход</button>
+        <button class="tab" :class="{ active: activeTab === 'register' }" @click="activeTab = 'register'">Регистрация</button>
+      </div>
 
-    <div v-if="activeTab === 'register'" class="form-container active">
-      <form @submit.prevent="handleRegister">
-        <div class="form-group">
-          <label>Имя:</label>
-          <input type="text" v-model="registerForm.name" required>
-        </div>
-        <div class="form-group">
-          <label>Email:</label>
-          <input type="email" v-model="registerForm.email" required>
-        </div>
-        <div class="form-group">
-          <label>Пароль:</label>
-          <input type="password" v-model="registerForm.password" required>
-        </div>
-        <button type="submit" class="btn">Зарегистрироваться</button>
-      </form>
+      <div v-if="activeTab === 'login'" class="form-container">
+        <form @submit.prevent="handleLogin">
+          <div class="form-group">
+            <label>Email:</label>
+            <input type="email" v-model="loginForm.email" required>
+          </div>
+          <div class="form-group">
+            <label>Пароль:</label>
+            <input type="password" v-model="loginForm.password" required>
+          </div>
+          <button type="submit" class="btn">Войти</button>
+        </form>
+      </div>
+
+      <div v-if="activeTab === 'register'" class="form-container">
+        <form @submit.prevent="handleRegister">
+          <div class="form-group">
+            <label>Имя:</label>
+            <input type="text" v-model="registerForm.name" required>
+          </div>
+          <div class="form-group">
+            <label>Email:</label>
+            <input type="email" v-model="registerForm.email" required>
+          </div>
+          <div class="form-group">
+            <label>Пароль:</label>
+            <input type="password" v-model="registerForm.password" required>
+          </div>
+          <button type="submit" class="btn">Зарегистрироваться</button>
+        </form>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue'
+import { useAuthStore } from '@/stores/auth' // Импортируем наше хранилище
 
+const auth = useAuthStore() // Инициализируем его
 const activeTab = ref('login')
+
 const loginForm = reactive({ email: '', password: '' })
 const registerForm = reactive({ name: '', email: '', password: '' })
 
-// Функция для входа
 const handleLogin = async () => {
   try {
     const response = await fetch('http://127.0.0.1:8000/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: loginForm.email,
-        password: loginForm.password
-      })
-    });
-
-    const data = await response.json();
+      body: JSON.stringify(loginForm)
+    })
+    const data = await response.json()
 
     if (response.ok) {
-      alert(`С возвращением, ${data.user_name}!`);
-      // Здесь можно сохранить токен или перенаправить пользователя
+      // Сохраняем данные ЧЕРЕЗ Pinia
+      auth.setUser({ name: data.user_name, email: loginForm.email })
     } else {
-      alert(data.detail || "Ошибка при входе");
+      alert(data.detail)
     }
-  } catch (error) {
-    alert("Не удалось соединиться с сервером. Проверь, запущен ли FastAPI.");
+  } catch (err) {
+    alert("Бэкенд недоступен")
   }
 }
 
-// Функция для регистрации
 const handleRegister = async () => {
   try {
     const response = await fetch('http://127.0.0.1:8000/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(registerForm)
-    });
-
-    const data = await response.json();
-
+    })
     if (response.ok) {
-      alert("Регистрация прошла успешно! Теперь войдите в аккаунт.");
-      activeTab.value = 'login'; // Переключаем пользователя на вкладку входа
-    } else {
-      alert(data.detail || "Ошибка при регистрации");
+      alert("Успешно! Войдите")
+      activeTab.value = 'login'
     }
-  } catch (error) {
-    alert("Ошибка сети. Проверь работу бэкенда.");
+  } catch (err) {
+    alert("Ошибка сети")
   }
 }
 </script>
