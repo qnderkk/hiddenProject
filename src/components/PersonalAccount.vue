@@ -46,8 +46,52 @@ const activeTab = ref('login')
 const loginForm = reactive({ email: '', password: '' })
 const registerForm = reactive({ name: '', email: '', password: '' })
 
-const handleLogin = () => alert(`Вход: ${loginForm.email}`)
-const handleRegister = () => alert(`Регистрация: ${registerForm.name}`)
+// Функция для входа
+const handleLogin = async () => {
+  try {
+    const response = await fetch('http://127.0.0.1:8000/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: loginForm.email,
+        password: loginForm.password
+      })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert(`С возвращением, ${data.user_name}!`);
+      // Здесь можно сохранить токен или перенаправить пользователя
+    } else {
+      alert(data.detail || "Ошибка при входе");
+    }
+  } catch (error) {
+    alert("Не удалось соединиться с сервером. Проверь, запущен ли FastAPI.");
+  }
+}
+
+// Функция для регистрации
+const handleRegister = async () => {
+  try {
+    const response = await fetch('http://127.0.0.1:8000/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(registerForm)
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert("Регистрация прошла успешно! Теперь войдите в аккаунт.");
+      activeTab.value = 'login'; // Переключаем пользователя на вкладку входа
+    } else {
+      alert(data.detail || "Ошибка при регистрации");
+    }
+  } catch (error) {
+    alert("Ошибка сети. Проверь работу бэкенда.");
+  }
+}
 </script>
 
 <style scoped>
