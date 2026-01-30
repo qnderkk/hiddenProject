@@ -1,0 +1,18 @@
+{
+  "name": "heart-craft-vue",
+  "version": "1.0.0",
+  "description": "Vue.js интернет-магазин мебели",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "vue": "^3.3.4",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "^5.0.8",
+    "@vue/compiler-sfc": "^3.3.4"
+  }
+}
