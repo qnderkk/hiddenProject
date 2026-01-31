@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # Формат: postgresql://логин:пароль@хост:порт/название_бд
-DATABASE_URL = "postgresql://postgres:12345678@localhost:5432/hidden_db"
+DATABASE_URL = "postgresql://postgres:510141@localhost:5432/hidden_db"
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
