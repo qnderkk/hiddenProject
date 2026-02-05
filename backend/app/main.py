@@ -8,3 +8,7 @@ app = FastAPI(
     docs_url="/api/docs",
     redoc_url="/api/redoc"
 )
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthly"}
