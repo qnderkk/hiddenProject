@@ -1,8 +1,8 @@
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 import jwt
-from ..repositories.user_repo import UserRepository
-from ..schemas.user import UserCreate, UserLogin
+from app.repositories.user_repo import UserRepository
+from app.schemas.user import UserCreate, UserLogin
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

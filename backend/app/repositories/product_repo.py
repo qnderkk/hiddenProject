@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
-from ..models.product import Product
-from ..schemas.product import ProductCreate
+from app.models.product import Product
+from app.schemas.product import ProductCreate
 
 
 class ProductRepository:

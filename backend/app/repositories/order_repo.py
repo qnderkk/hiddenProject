@@ -1,10 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
-from ..models.order import Order
-from ..models.order_item import OrderItem
-from ..models.product import Product
-from ..schemas.order_item import OrderCreate
+from app.models.order import Order
+from app.models.order_item import OrderItem
+from app.models.product import Product
+from app.schemas.order_item import OrderCreate
 
 
 class OrderRepository:

@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
-from ..repositories.order_repo import OrderRepository
-from ..repositories.product_repo import ProductRepository
-from ..schemas.order_item import OrderCreate
+from app.repositories.order_repo import OrderRepository
+from app.repositories.product_repo import ProductRepository
+from app.schemas.order_item import OrderCreate
 
 class OrderService:
     def __init__(self, order_repo: OrderRepository, product_repo: ProductRepository):
