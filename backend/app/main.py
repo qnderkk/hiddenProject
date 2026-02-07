@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import auth, products, orders
+from fastapi.staticfiles import StaticFiles
+from app.routes import auth, products, orders, contact
 from app.config import settings
 from contextlib import asynccontextmanager
 from app.database import init_db
@@ -29,10 +30,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.mount("/static", StaticFiles(directory=settings.static_dir), name="static")
 
 app.include_router(auth.router)
 app.include_router(products.router)
 app.include_router(orders.router)
+app.include_router(contact.router)
 
 @app.get("/")
 async def root():

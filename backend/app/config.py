@@ -8,8 +8,13 @@ class Settings(BaseSettings):
     DB_PASS: str
     DB_NAME: str
 
+    TELEGRAM_BOT_TOKEN: str
+    TELEGRAM_CHAT_ID: str
+
     app_name: str = "Heart&Craft"
     debug: bool = True
+    static_dir: str = "static"
+    image_dir: str = "static/images"
 
     @computed_field
     @property
