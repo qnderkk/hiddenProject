@@ -4,7 +4,7 @@
 
 ## в директории hiddenProject\backend
 
-bash: uvicorn main:app --reload
+bash: python run.py
 
 ## в директории hiddenProject
 
