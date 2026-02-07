@@ -5,12 +5,26 @@
 
     <ul class="navbar" :class="{ active: isMenuOpen }">
       <li><router-link to="/" @click="closeMenu">Главная</router-link></li>
-      <li><router-link :to="{ path: '/', hash: '#new' }" @click="closeMenu">Новинки</router-link></li>
-      <li><router-link to="/products" @click="closeMenu">Каталог</router-link></li>
+      <li>
+        <router-link :to="{ path: '/', hash: '#new' }" @click="closeMenu"
+          >Новинки</router-link
+        >
+      </li>
+      <li>
+        <router-link to="/products" @click="closeMenu">Каталог</router-link>
+      </li>
+      <li>
+        <router-link to="/contact" @click="closeMenu"
+          >Свяжитесь с нами</router-link
+        >
+      </li>
 
       <li>
         <router-link to="/cart" class="cart-link" @click="closeMenu">
-          Корзина <span v-if="cart.totalCount > 0" class="cart-badge">{{ cart.totalCount }}</span>
+          Корзина
+          <span v-if="cart.totalCount > 0" class="cart-badge">{{
+            cart.totalCount
+          }}</span>
         </router-link>
       </li>
 
@@ -25,16 +39,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useAuthStore } from '@/stores/auth' // Импортируем хранилище юзера
-import { useCartStore } from '@/stores/cart' // Импортируем хранилище корзины
+import { ref } from "vue";
+import { useAuthStore } from "@/stores/auth"; // Импортируем хранилище юзера
+import { useCartStore } from "@/stores/cart"; // Импортируем хранилище корзины
 
-const isMenuOpen = ref(false)
-const auth = useAuthStore()
-const cart = useCartStore()
+const isMenuOpen = ref(false);
+const auth = useAuthStore();
+const cart = useCartStore();
 
-const toggleMenu = () => isMenuOpen.value = !isMenuOpen.value
-const closeMenu = () => isMenuOpen.value = false
+const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value);
+const closeMenu = () => (isMenuOpen.value = false);
 </script>
 
 <style scoped>
@@ -68,6 +82,8 @@ const closeMenu = () => isMenuOpen.value = false
 }
 
 @media (max-width: 768px) {
-  #menu-icon { display: block; }
+  #menu-icon {
+    display: block;
+  }
 }
 </style>
