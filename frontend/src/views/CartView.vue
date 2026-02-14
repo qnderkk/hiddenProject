@@ -31,11 +31,58 @@
 
 <script setup>
 import { useCartStore } from '@/stores/cart'
+import { useRouter } from 'vue-router'
 
 const cart = useCartStore()
+const router = useRouter()
 
-const checkout = () => {
-  alert('Заказ оформлен! (Тут будет логика отправки на бэкенд)')
+const checkout = async () => {
+  if (cart.items.length === 0) return
+
+  // 1. Спрашиваем адрес (временно через prompt)
+  const address = prompt("Введите адрес доставки:", "ул. Пушкина, д. Колотушкина")
+  if (!address) return
+
+  // 2. Группируем товары по ID для бэкенда (считаем количество)
+  const groupedItems = cart.items.reduce((acc, item) => {
+    const found = acc.find(i => i.product_id === item.id)
+    if (found) {
+      found.quantity += 1
+    } else {
+      acc.push({ product_id: item.id, quantity: 1 })
+    }
+    return acc
+  }, [])
+
+  // 3. Формируем объект заказа по твоей схеме OrderCreate
+  const orderPayload = {
+    delivery_address: address,
+    items: groupedItems
+  }
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/orders/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // 'Authorization': `Bearer ${localStorage.getItem('token')}` // если будет токен
+      },
+      body: JSON.stringify(orderPayload)
+    })
+
+    if (response.ok) {
+      const result = await response.json()
+      alert(`Заказ №${result.id} успешно оформлен!`)
+      cart.clearCart() // Очищаем корзину после успеха
+      router.push('/products') // Уводим пользователя на каталог
+    } else {
+      const error = await response.json()
+      alert("Ошибка при оформлении: " + (error.detail || "Неизвестная ошибка"))
+    }
+  } catch (err) {
+    console.error(err)
+    //alert("Сервер бэкенда недоступен")
+  }
 }
 </script>
 

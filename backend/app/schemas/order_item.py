@@ -8,7 +8,7 @@ class OrderItemBase(BaseModel):
     quantity: int = Field(..., gt=0, description="Quantity")
 
 
-class OrderItemCreaete(OrderItemBase):
+class OrderItemCreate(OrderItemBase): # Убрал лишнюю 'e'
     pass
 
 
@@ -28,8 +28,7 @@ class OrderItemResponse(BaseModel):
 
 class OrderBase(BaseModel):
     delivery_address: str = Field(..., min_length=1, description="Order address")
-    items: List[OrderItemCreaete]
-
+    items: List[OrderItemCreate] # И тут соответственно тоже
 
 class OrderCreate(OrderBase):
     pass
