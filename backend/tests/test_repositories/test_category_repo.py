@@ -2,6 +2,13 @@ import pytest
 from app.repositories.category_repo import CategoryRepository
 from pydantic import BaseModel
 
+"""
+Тестирование репозитория категорий (CategoryRepository):
+- Создание новой категории через схему MockCategoryCreate.
+- Получение списка всех доступных категорий (метод get_all).
+- Поиск категории по уникальному имени.
+- Удаление категории и проверка её отсутствия в БД после этого.
+"""
 
 class MockCategoryCreate(BaseModel):
     name: str
@@ -42,10 +49,8 @@ async def test_delete_category(async_db):
     repo = CategoryRepository(async_db)
     cat = await repo.create(MockCategoryCreate(name="To Delete"))
 
-    # Удаляем
     deleted_cat = await repo.delete(cat.id)
     assert deleted_cat.id == cat.id
 
-    # Проверяем, что в базе больше нет
     check = await repo.get_by_id(cat.id)
     assert check is None

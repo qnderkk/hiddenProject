@@ -2,8 +2,13 @@ import pytest
 from app.repositories.user_repo import UserRepository
 from pydantic import BaseModel
 
+"""
+Тестирование репозитория пользователей (UserRepository):
+- Проверка асинхронного создания пользователя с сохранением хешированного пароля.
+- Поиск пользователя по Email (используется для аутентификации).
+- Поиск пользователя по ID (используется для получения профиля).
+"""
 
-# Мокаем схему, чтобы тест не зависел от файла schemas/user.py
 class MockUserCreate(BaseModel):
     name: str
     email: str

@@ -1,6 +1,11 @@
 import pytest
 from unittest.mock import patch
 
+"""
+Тестирование формы обратной связи:
+- POST /contacts/contact (Success): Проверка отправки данных с использованием Mock для Telegram API (изолируем тесты от внешних сервисов).
+- POST /contacts/contact (Validation Error): Проверка встроенной валидации Pydantic. Ожидаем ошибку 422 при некорректном формате email.
+"""
 
 @pytest.mark.asyncio
 async def test_contact_form_success(client):
@@ -11,7 +16,6 @@ async def test_contact_form_success(client):
         "message": "I have a question"
     }
 
-    # Мокаем функцию send_to_telegram, чтобы она всегда возвращала True
     with patch("app.routes.contact.send_to_telegram", return_value=True):
         response = await client.post("/contacts/contact", json=payload)
 

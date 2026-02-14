@@ -1,6 +1,12 @@
 import pytest
 import io
 
+"""
+Тестирование каталога товаров:
+- GET /products/: Проверка получения списка товаров (включая сценарий с пустым списком).
+- POST /products/: Тестирование создания товара с загрузкой файла (Multipart/form-data). 
+  Проверяется корректная обработка текстовых полей вместе с бинарным контентом изображения.
+"""
 
 @pytest.mark.asyncio
 async def test_get_products_empty(client):
@@ -11,14 +17,11 @@ async def test_get_products_empty(client):
 
 @pytest.mark.asyncio
 async def test_create_product_route(client, async_db):
-    # Для создания товара нужна категория (создаем напрямую в БД через репозиторий или роут)
-    # Предположим, категория с ID=1 уже создана или создадим её здесь
     from app.models.category import Category
     cat = Category(name="Electronics")
     async_db.add(cat)
     await async_db.commit()
 
-    # Имитируем отправку формы с файлом
     file_content = b"fake-image-binary-content"
     file = io.BytesIO(file_content)
 

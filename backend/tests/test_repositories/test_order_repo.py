@@ -6,8 +6,14 @@ from app.repositories.category_repo import CategoryRepository
 from pydantic import BaseModel
 from typing import List
 
+"""
+Тестирование репозитория заказов (OrderRepository) — проверка бизнес-логики:
+- Комплексное создание заказа: автоматический расчет общей стоимости (total_amount) 
+  на основе цен продуктов и их количества.
+- Проверка привязки заказа к конкретному пользователю.
+- Получение истории заказов пользователя (метод get_user_orders).
+"""
 
-# --- MOCKS ---
 class MockUserCreate(BaseModel):
     name: str;
     email: str;
@@ -37,7 +43,6 @@ class MockOrderCreate(BaseModel):
 
 @pytest.mark.asyncio
 async def test_create_order_logic(async_db):
-    # 1. Подготовка: User, Category, Product
     user = await UserRepository(async_db).create(
         MockUserCreate(name="U", email="e@e.com", password="p"), "hash"
     )
@@ -50,8 +55,6 @@ async def test_create_order_logic(async_db):
         MockProductCreate(name="P2", price=50.0, category_id=cat.id)
     )
 
-    # 2. Создание заказа (1 шт P1 и 2 шт P2)
-    # Ожидаемая сумма: 100*1 + 50*2 = 200.0
     order_repo = OrderRepository(async_db)
     order_data = MockOrderCreate(
         delivery_address="Main St",
@@ -63,7 +66,6 @@ async def test_create_order_logic(async_db):
 
     order = await order_repo.create(user_id=user.id, order_data=order_data)
 
-    # 3. Проверки
     assert order.id is not None
     assert order.total_amount == 200.0
     assert order.status == "new"
@@ -71,13 +73,11 @@ async def test_create_order_logic(async_db):
 
 @pytest.mark.asyncio
 async def test_get_user_orders(async_db):
-    # Setup
     user = await UserRepository(async_db).create(
         MockUserCreate(name="U2", email="e2@e.com", password="p"), "hash"
     )
     order_repo = OrderRepository(async_db)
 
-    # Создаем пустой заказ для простоты
     order_data = MockOrderCreate(delivery_address="Addr", items=[])
     await order_repo.create(user.id, order_data)
 

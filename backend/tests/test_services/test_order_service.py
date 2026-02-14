@@ -4,6 +4,13 @@ from unittest.mock import AsyncMock, MagicMock
 from app.services.order_service import OrderService
 from app.schemas.order_item import OrderCreate
 
+"""
+Тестирование логики оформления заказов (OrderService):
+- Валидация корзины: проверка выброса ошибки 400 (HTTPException), если список товаров пуст.
+- Проверка наличия товаров: выброс ошибки 404, если запрашиваемого продукта не существует в базе.
+- Процесс оформления: проверка успешного вызова метода создания заказа в репозитории при корректных входных данных.
+- Изоляция: использование Mock для разделения логики заказов и товаров.
+"""
 
 @pytest.fixture
 def order_repo_mock():
@@ -22,7 +29,6 @@ def order_service(order_repo_mock, product_repo_mock):
 
 @pytest.mark.asyncio
 async def test_place_order_empty_items(order_service):
-    # Тестируем валидацию пустой корзины
     order_data = OrderCreate(delivery_address="Address", items=[])
 
     with pytest.raises(HTTPException) as exc:
@@ -34,7 +40,6 @@ async def test_place_order_empty_items(order_service):
 
 @pytest.mark.asyncio
 async def test_place_order_product_not_found(order_service, product_repo_mock):
-    # Имитируем, что товар с ID 999 не существует
     product_repo_mock.get_by_id = AsyncMock(return_value=None)
 
     order_data = OrderCreate(
@@ -51,7 +56,6 @@ async def test_place_order_product_not_found(order_service, product_repo_mock):
 
 @pytest.mark.asyncio
 async def test_place_order_success(order_service, order_repo_mock, product_repo_mock):
-    # Все проверки пройдены
     product_repo_mock.get_by_id = AsyncMock(return_value=MagicMock(id=1))
     order_repo_mock.create = AsyncMock(return_value=MagicMock(id=101))
 

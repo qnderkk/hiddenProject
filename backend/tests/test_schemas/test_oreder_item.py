@@ -1,10 +1,14 @@
 import pytest
 from pydantic import ValidationError
-
 from app.schemas.order_item import OrderCreate, OrderItemCreaete
 
+"""
+Тестирование схем создания заказов и их позиций:
+- OrderCreate: проверка вложенной структуры данных (список позиций внутри заказа).
+- OrderItemCreate: валидация количества товара (количество не может быть нулевым или отрицательным).
+"""
+
 def test_order_create_valid():
-    """Проверка структуры создания заказа с вложенными товарами"""
     data = {
         "delivery_address": "Moscow, Red Square 1",
         "items": [
@@ -17,6 +21,5 @@ def test_order_create_valid():
     assert order.items[0].quantity == 2
 
 def test_order_item_invalid_quantity():
-    """Количество товара должно быть больше 0"""
     with pytest.raises(ValidationError):
         OrderItemCreaete(product_id=1, quantity=0)

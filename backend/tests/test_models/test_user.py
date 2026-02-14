@@ -2,6 +2,12 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from app.models.user import User
 
+"""
+Тестирование модели User:
+- Создание пользователя и проверка маппинга полей (name, email, is_admin).
+- Проверка уникальности email (ожидание IntegrityError при дубликате).
+- Проверка значения по умолчанию для флага администратора (False).
+"""
 
 def test_create_user(db):
     user = User(
@@ -27,7 +33,6 @@ def test_user_email_unique(db):
     user2 = User(name="User 2", email="same@example.com", hashed_password="pw2")
     db.add(user2)
 
-    # Ожидаем ошибку целостности базы данных при дублировании email
     with pytest.raises(IntegrityError):
         db.commit()
 
@@ -38,4 +43,4 @@ def test_default_is_admin(db):
     db.commit()
     db.refresh(user)
 
-    assert user.is_admin is False  # Проверка default=False
+    assert user.is_admin is False

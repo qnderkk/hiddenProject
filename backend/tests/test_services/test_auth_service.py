@@ -3,6 +3,13 @@ from unittest.mock import AsyncMock, MagicMock
 from app.services.auth_service import AuthService
 from app.schemas.user import UserCreate, UserLogin
 
+"""
+Тестирование сервиса аутентификации (AuthService):
+- Регистрация пользователя: проверка хеширования пароля перед сохранением и запрет на регистрацию дубликатов Email.
+- Аутентификация: проверка логики сверки паролей и выдачи JWT-токена.
+- Обработка ошибок: проверка возврата None или исключений при неверных учетных данных.
+- Изоляция: использование AsyncMock для имитации работы UserRepository.
+"""
 
 @pytest.fixture
 def user_repo_mock():
@@ -16,7 +23,6 @@ def auth_service(user_repo_mock):
 
 @pytest.mark.asyncio
 async def test_register_user_success(auth_service, user_repo_mock):
-    # Настраиваем мок: пользователя с таким email нет
     user_repo_mock.get_by_email = AsyncMock(return_value=None)
     user_repo_mock.create = AsyncMock(return_value=MagicMock(id=1, email="test@test.com"))
 
@@ -25,14 +31,12 @@ async def test_register_user_success(auth_service, user_repo_mock):
 
     assert result is not None
     user_repo_mock.create.assert_called_once()
-    # Проверяем, что пароль захеширован (не передается в открытом виде)
     args, kwargs = user_repo_mock.create.call_args
     assert args[1] != "password123"
 
 
 @pytest.mark.asyncio
 async def test_register_user_already_exists(auth_service, user_repo_mock):
-    # Имитируем, что пользователь найден
     user_repo_mock.get_by_email = AsyncMock(return_value=MagicMock())
 
     user_data = UserCreate(name="Test", email="exists@test.com", password="123")
@@ -51,5 +55,4 @@ async def test_authenticate_user_invalid_password(auth_service, user_repo_mock):
     login_data = UserLogin(email="test@test.com", password="wrong_password")
     result = await auth_service.authenticate_user(login_data)
 
-    # Меняем None на False, так как сервис возвращает False при ошибке пароля
     assert result is False
