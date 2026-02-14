@@ -1,9 +1,14 @@
 <template>
   <div class="product-card">
     <div class="image-container">
-      <img :src="product.image" :alt="product.name" loading="lazy" />
+      <img
+          :src="product.image"
+          :alt="product.name"
+          class="product-image"
+          @error="(e) => e.target.src = '/img/placeholder.jpg'"
+      />
       <div class="overlay">
-        <button @click="handleAddToCart($event)" class="add-to-cart-btn">
+        <button @click="handleOnAdd($event)" class="add-to-cart-btn">
           В корзину
         </button>
       </div>
@@ -11,10 +16,11 @@
     <div class="product-details">
       <h3>{{ product.name }}</h3>
       <p class="product-price">{{ product.price }} ₽</p>
+
       <button
-        v-if="isAdmin"
-        @click="$emit('delete', product.id)"
-        class="admin-delete-btn"
+          v-if="isAdmin"
+          @click="$emit('delete', product.id)"
+          class="admin-delete-btn"
       >
         Удалить товар
       </button>
@@ -26,21 +32,21 @@
 const props = defineProps(["product", "isAdmin"]);
 const emit = defineEmits(["delete", "add-to-cart"]);
 
-const handleAddToCart = (event) => {
-  emit("add-to-cart", { product: props.product, event });
+const handleOnAdd = (event) => {
+  emit("add-to-cart", { product: props.product, event: event });
 };
 </script>
 
 <style scoped>
+/* Ваши оригинальные стили */
 .product-card {
   background: #fff;
   transition: transform 0.4s ease;
   border: 1px solid #f0f0f0;
   width: 100%;
 }
-.product-card:hover {
-  transform: translateY(-10px);
-}
+.product-card:hover { transform: translateY(-10px); }
+
 .image-container {
   position: relative;
   overflow: hidden;
@@ -52,9 +58,8 @@ const handleAddToCart = (event) => {
   object-fit: cover;
   transition: transform 0.5s ease;
 }
-.product-card:hover .image-container img {
-  transform: scale(1.1);
-}
+.product-card:hover .image-container img { transform: scale(1.1); }
+
 .overlay {
   position: absolute;
   top: 0;
@@ -68,9 +73,8 @@ const handleAddToCart = (event) => {
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-.product-card:hover .overlay {
-  opacity: 1;
-}
+.product-card:hover .overlay { opacity: 1; }
+
 .add-to-cart-btn {
   background: #ba1c1c;
   color: #fff;
@@ -80,21 +84,11 @@ const handleAddToCart = (event) => {
   font-weight: bold;
   text-transform: uppercase;
 }
-.product-details {
-  padding: 20px;
-  text-align: center;
-}
-.product-details h3 {
-  font-size: 1.1rem;
-  margin-bottom: 10px;
-  font-weight: 500;
-  color: #333;
-}
-.product-price {
-  color: #ba1c1c;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
+
+.product-details { padding: 20px; text-align: center; }
+.product-details h3 { font-size: 1.1rem; margin-bottom: 10px; font-weight: 500; color: #333; }
+.product-price { color: #ba1c1c; font-size: 1.2rem; font-weight: 600; }
+
 .admin-delete-btn {
   margin-top: 15px;
   background: none;
