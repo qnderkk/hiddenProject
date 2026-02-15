@@ -63,11 +63,11 @@
 
 ### 1 диаграмма C4:
 
-![alt text](image.png)
+![alt text](/backend/static/images/image.png)
 
 ### 2 диаграмма C4:
 
-![alt text](image2.png)
+![alt text](/backend/static/images/image2.png)
 
 ## Контракты API
 
@@ -87,4 +87,4 @@ python-telegram-bot==22.6
 
 ## Таблицы
 
-![alt text](image3.png)
+![alt text](/backend/static/images/image3.png)
